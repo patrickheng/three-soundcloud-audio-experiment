@@ -1,0 +1,143 @@
+@import '~stylesheets/common/variables';
+@import '~stylesheets/common/mixins';
+
+.audio-control-panel {
+  position: fixed;
+  bottom: 0rem;
+  right: 0rem;
+  width: 30rem;
+  padding: 1rem;
+  transform: translate3d( 0, 100%, 0 );
+  &:before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0.1rem;
+    width: 0.1rem;
+    height: 100%;
+    background: rgba( $color-soundcloud, 0.3 );
+  }
+}
+
+.audio-control-panel a {
+  color: $color-soundcloud;
+  transition: opacity 0.3s ease-out;
+  &:hover {
+    opacity: 0.4;
+  }
+}
+
+.audio-control-panel__bar {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  width: 100%;
+  padding: 0.5rem;
+  color: $color-white;
+  background: rgba( $color-soundcloud, 0.5 );
+  cursor: pointer;
+
+  &:before {
+    content: '';
+    display: block;
+    width: 9.6rem;
+    height: 1.2rem;
+    margin-left: 0.7rem;
+    background: url('/images/sc_sbs_white_96x12.png') no-repeat center;
+    background-size: contain;
+  }
+}
+
+.audio-control-panel__title {
+  display: block;
+  font-weight: bold;
+  display: inline-block;
+  font-size: 1.2rem;
+  padding-bottom: 1rem;
+
+  span {
+    font-weight: normal;
+    font-style: italic;
+    font-size: 1rem;
+  }
+}
+
+.track-info {
+  position: relative;
+  @include clearfix;
+}
+
+.track-info__image {
+  float: left;
+  width: 8rem;
+  height: 8rem;
+  margin-right: 1rem;
+}
+
+.track-info__block {
+  float: left;
+}
+
+.track-info__artist {
+  font-size: 1.2rem;
+  text-transform: uppercase;
+}
+
+.track-info__title {
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+.track-info__timer {
+  display: inline-block;
+  font-size: 0.9rem;
+  margin-top: 1.2rem;
+  margin-bottom: 0.4rem;
+}
+
+.track-info__progress {
+  position: relative;
+  width: 15rem;
+  height: 0.4rem;
+  background: $color-light-grey;
+  cursor: pointer;
+}
+
+.track-info__progress-bar {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: $color-soundcloud;
+  opacity: 0.5;
+  transition: transform 1s linear;
+  transform: scaleX( 0 );
+  transform-origin: left;
+  cursor: pointer;
+}
+
+.player-form {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.player-form__entry {
+  width: calc( 100% - 5rem );
+  height: 2rem;
+}
+
+.player-form__submit {
+  background: rgba( $color-black, 0.1 );
+  width: 3rem;
+  height: 2rem;
+  transition: background 0.3s ease-out;
+  cursor: pointer;
+  padding: 0rem;
+  margin-left: 1rem;
+
+  &:hover {
+    background: rgba( $color-soundcloud, 0.4 );
+  }
+}
