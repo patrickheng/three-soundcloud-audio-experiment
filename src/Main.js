@@ -4,8 +4,10 @@ import domready from 'domready';
 import AudioAnalyser from 'helpers/AudioAnalyser';
 import SoundCloudLoader from 'helpers/SoundCloudLoader';
 
+import LoaderComponent from 'components/Loader';
 import AudioControlPanel from 'components/AudioControlPanel';
 import WebGLExperiment from 'components/WebGLExperiment';
+import AssetsLoader from 'helpers/AssetsLoader';
 
 class Main {
 
@@ -13,9 +15,7 @@ class Main {
 
     this.bind();
 
-    this.start();
-
-    this.addEventListeners();
+    this.initLoader();
   }
 
   bind() {
@@ -33,6 +33,25 @@ class Main {
     this.player.addEventListener( 'timeupdate', this.onPlayerTimeUpdate, false );
   }
 
+  initLoader() {
+
+    this.loaderComponent = new LoaderComponent();
+    
+    this.assetLoader = AssetsLoader;
+    this.resources = [];
+
+    this.assetLoader
+     .load()
+     .then( resources => {
+
+       resources.forEach( ({ id, resource }) => this.resources[ id ] = resource );
+
+       this.start();
+       this.addEventListeners();
+
+     } );
+  }
+
   start() {
 
     const root = document.querySelector( '#application' );
@@ -45,9 +64,9 @@ class Main {
 
     this.audioAnalyser = new AudioAnalyser( this.player );
     this.audioControlPanel = new AudioControlPanel( this.player );
-    this.loader = new SoundCloudLoader( this.player, this.audioControlPanel);
+    this.SCLoader = new SoundCloudLoader( this.player, this.audioControlPanel);
 
-    this.webgl = new WebGLExperiment( root, this.audioAnalyser );
+    this.webgl = new WebGLExperiment( root, this.resources, this.audioAnalyser );
 
     if ( window.location.hash ) {
       const trackUrl = 'https://soundcloud.com/' + window.location.hash.substr(1);
@@ -61,18 +80,15 @@ class Main {
 
   loadTrack( url ) {
 
-    this.loader.loadStream( url,
+    this.SCLoader.loadStream( url,
       ()=>{
         this.audioControlPanel.clearInfoPanel();
-        this.audioAnalyser.play( this.loader.streamUrl );
-        this.audioControlPanel.update( this.loader );
+        this.audioAnalyser.play( this.SCLoader.streamUrl );
+        this.audioControlPanel.update( this.SCLoader );
       },
       ()=>{
-        /* eslint-disable */
-        console.warn( 'Error : ', this.loaderMessage );
 
         this.loadTrack( 'https://soundcloud.com/alvan/amazone' );
-        /* eslint-enable */
       });
   }
 
@@ -81,15 +97,15 @@ class Main {
     switch( ev.keyCode ) {
       case 32:
       // spacebar
-      this.loader.directStream( 'toggle' );
+        this.SCLoader.directStream( 'toggle' );
         break;
       case 37:
       // left key
-      this.loader.directStream( 'backward' );
+        this.SCLoader.directStream( 'backward' );
         break;
       case 39:
       // right key
-      this.loader.directStream( 'forward' );
+        this.SCLoader.directStream( 'forward' );
         break;
     }
   }
@@ -102,7 +118,6 @@ class Main {
 
   onPlayerTimeUpdate() {
     this.audioControlPanel.timecodeUpdate();
-    this.audioAnalyser.sampleAudioData();
   }
 
 }

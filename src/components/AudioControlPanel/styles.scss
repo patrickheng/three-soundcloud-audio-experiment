@@ -4,19 +4,28 @@
 .audio-control-panel {
   position: fixed;
   bottom: 0rem;
-  right: 0rem;
+  right: 2rem;
   width: 30rem;
   padding: 1rem;
   transform: translate3d( 0, 100%, 0 );
-  &:before {
+
+  &:before,
+  &:after {
     content: '';
     display: block;
     position: absolute;
     top: 0;
-    left: 0.1rem;
     width: 0.1rem;
     height: 100%;
     background: rgba( $color-soundcloud, 0.3 );
+  }
+
+  &:before {
+    left: 0.1rem;
+  }
+
+  &:after {
+    right: 0.1rem;
   }
 }
 
@@ -77,6 +86,7 @@
 
 .track-info__block {
   float: left;
+  width: 19rem;
 }
 
 .track-info__artist {

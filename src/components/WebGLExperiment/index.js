@@ -4,9 +4,10 @@ import { home as homeConfig } from 'config/webgl';
 
 class WebGLExperiment {
 
-  constructor( root, audioAnalyser ) {
+  constructor( root, resources, audioAnalyser ) {
 
     this.root = root;
+    this.resources = resources;
     this.audioAnalyser = audioAnalyser;
 
     this.bind();
@@ -28,7 +29,7 @@ class WebGLExperiment {
 
   start() {
 
-    this.scene = new Scene( homeConfig, this.audioAnalyser );
+    this.scene = new Scene( homeConfig, this.resources, this.audioAnalyser );
     this.sceneDomEl = this.scene.renderer.domElement;
     this.root.appendChild( this.sceneDomEl );
   }

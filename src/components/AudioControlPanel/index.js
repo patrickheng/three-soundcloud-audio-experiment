@@ -1,9 +1,7 @@
 import './styles.scss';
 
 /**
-* AudioControlPanel class
-* Based on https://github.com/michaelbromley/soundcloud-visualizer by @michaelbromley
-* Improved and written in ES2015 by @patrickheng
+* AudioControlPanel component
 */
 
 class AudioControlPanel {
@@ -27,17 +25,18 @@ class AudioControlPanel {
     };
 
     this.isOpen = false;
+    this.closeTimeout = null;
 
     this.bind();
     this.addEventListeners();
 
     this.toggleControlPanel();
-
+    this.closeTimeout = setTimeout( this.closeControlPanel, 10000);
   }
 
   bind() {
 
-    [ 'onProgressClick', 'onPannelBarClick' ]
+    [ 'onProgressClick', 'onPannelBarClick', 'openControlPanel', 'closeControlPanel' ]
       .forEach( ( fn ) => this[ fn ] = this[ fn ].bind( this ) );
   }
 
@@ -90,28 +89,39 @@ class AudioControlPanel {
   }
 
   formatTimer( seconds ) {
-    let minutes = Math.floor(seconds / 60);
-    minutes = (minutes >= 10) ? minutes : "0" + minutes;
-    seconds = Math.floor(seconds % 60);
-    seconds = (seconds >= 10) ? seconds : "0" + seconds;
+    let minutes = Math.floor( seconds / 60 );
+    minutes = ( minutes >= 10 ) ? minutes : "0" + minutes;
+    seconds = Math.floor( seconds % 60 );
+    seconds = ( seconds >= 10 ) ? seconds : "0" + seconds;
 
     return minutes + ":" + seconds;
   }
 
   toggleControlPanel() {
 
+    clearTimeout( this.closeTimeout );
+
     if( this.isOpen ) {
 
-      TweenMax.to( this.$el, 1, { y: '100%', ease: Expo.easeOut, onComplete: ()=> {
-        this.isOpen = false;
-      }} );
+      this.closeControlPanel();
     } else {
 
-      TweenMax.to( this.$el, 1, { y: '0%', ease: Expo.easeOut, onComplete: ()=> {
-        this.isOpen = true;
-      }} );
+      this.openControlPanel();
     }
+  }
 
+  openControlPanel() {
+
+    TweenMax.to( this.$el, 1, { y: '0%', ease: Expo.easeOut, onComplete: ()=> {
+      this.isOpen = true;
+    }} );
+  }
+
+  closeControlPanel() {
+
+    TweenMax.to( this.$el, 1, { y: '100%', ease: Expo.easeOut, onComplete: ()=> {
+      this.isOpen = false;
+    }} );
   }
 
   onProgressClick( ev ) {

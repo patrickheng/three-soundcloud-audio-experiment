@@ -1,4 +1,5 @@
 import AbstractScene from 'webgl/core/AbstractScene';
+import MeshLines from '../meshes/MeshLines';
 import { lights as lightsConfig } from 'config/webgl/home';
 
 /**
@@ -9,7 +10,7 @@ class Scene extends AbstractScene {
   /**
    * constructor function
    */
-  constructor( config, audioAnalyser ) {
+  constructor( config, resources, audioAnalyser ) {
 
     super({
       camera: config.camera,
@@ -17,8 +18,10 @@ class Scene extends AbstractScene {
       postProcessing: config.postProcessing
     });
 
-    this.audioData = audioAnalyser.audioData;
+    this.config = config;
+    this.resources = resources;
     this.audioAnalyser = audioAnalyser;
+    this.audioData = audioAnalyser.audioData;
 
     this.progress = 0;
     this.cameraConfig = config.camera;
@@ -28,6 +31,7 @@ class Scene extends AbstractScene {
 
     this.addListeners();
     this.initLights();
+    this.initMeshes();
 
   }
 
@@ -55,6 +59,18 @@ class Scene extends AbstractScene {
     this.add( this.ambientLight );
   }
 
+  initMeshes() {
+
+    const geometry = new THREE.SphereGeometry( 5, 32, 32 );
+    const material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+    this.sphere = new THREE.Mesh( geometry, material );
+    this.add( this.sphere );
+
+
+    this.meshLines = new MeshLines( this.config.meshLines, this.resources );
+    this.add( this.meshLines );
+  }
+
   /**
    * render function
    */
@@ -64,6 +80,10 @@ class Scene extends AbstractScene {
 
     this.audioAnalyser.sampleAudioData();
     this.audioData = this.audioAnalyser.audioData;
+    this.beat = this.audioAnalyser.beat;
+    this.meshLines.update( this.clock.time, this.clock.delta );
+
+    this.sphere.scale.set( this.beat / 20, this.beat / 20, this.beat / 20 );
   }
 
   handleWindowResize({ width, height }) {
@@ -73,6 +93,7 @@ class Scene extends AbstractScene {
     this.camera.handleWindowResize({ width, height });
     this.renderer.handleWindowResize({ width, height });
     this.effectComposer.handleWindowResize({ width, height });
+    this.meshLines.handleWindowResize({ width, height });
   }
 }
 
