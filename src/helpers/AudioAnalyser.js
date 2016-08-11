@@ -17,8 +17,11 @@ class AudioAnalyser {
     this.audioCtx = new ( window.AudioContext || window.webkitAudioContext );
     this.analyser = this.audioCtx.createAnalyser();
     this.analyser.fftSize = 256;
-    this.audioFrequencies = new Uint8Array( 128 );
-    this.bpm = 0;
+
+    this.audioData = {
+      freq: new Uint8Array( 128 ),
+      beat: []
+    };
 
     this.source = this.audioCtx.createMediaElementSource( this.player );
     this.source.connect( this.analyser );
@@ -27,18 +30,18 @@ class AudioAnalyser {
 
   detectBeat() {
 
-    this.detect = beats({
+    const detect = beats({
       lo: 0,
       hi: 128,
       threshold: 0,
       decay: 0.005
     });
 
-    this.beat = this.detect( this.audioFrequencies );
+    this.audioData.beat = detect( this.audioData.freq );
   }
 
   sampleAudioData() {
-    this.analyser.getByteFrequencyData( this.audioFrequencies );
+    this.analyser.getByteFrequencyData( this.audioData.freq );
     this.detectBeat();
   }
 
@@ -48,6 +51,7 @@ class AudioAnalyser {
     this.player.src = url;
     this.player.play();
     this.detectBeat();
+    TweenMax.to( this.player, 0.3, { playbackRate : 1, ease: Expo.easeOut });
   }
 }
 

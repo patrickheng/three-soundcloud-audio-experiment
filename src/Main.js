@@ -1,5 +1,6 @@
 import 'stylesheets/main.scss';
 import 'gsap';
+
 import domready from 'domready';
 import AudioAnalyser from 'helpers/AudioAnalyser';
 import SoundCloudLoader from 'helpers/SoundCloudLoader';
@@ -20,23 +21,23 @@ class Main {
 
   bind() {
 
-    [ 'onKeyUp', 'onFormSubmit', 'onPlayerTimeUpdate' ]
+    [ 'onKeyUp', 'onFormSubmit', 'onPlayerTimeUpdate', 'onMouseDown', 'onMouseUp' ]
       .forEach( ( fn ) => this[ fn ] = this[ fn ].bind( this ) );
   }
 
   addEventListeners() {
 
     document.addEventListener( 'keyup', this.onKeyUp, false );
-
+    document.addEventListener( 'mousedown', this.onMouseDown, false );
+    document.addEventListener( 'mouseup', this.onMouseUp, false );
     this.trackForm.addEventListener( 'submit', this.onFormSubmit, false );
-
     this.player.addEventListener( 'timeupdate', this.onPlayerTimeUpdate, false );
   }
 
   initLoader() {
 
     this.loaderComponent = new LoaderComponent();
-    
+
     this.assetLoader = AssetsLoader;
     this.resources = [];
 
@@ -47,7 +48,6 @@ class Main {
        resources.forEach( ({ id, resource }) => this.resources[ id ] = resource );
 
        this.start();
-       this.addEventListeners();
 
      } );
   }
@@ -57,10 +57,12 @@ class Main {
     const root = document.querySelector( '#application' );
 
     this.player = document.createElement( 'audio' );
-
     this.trackForm = document.querySelector( '.player-form' );
     this.trackInput = document.querySelector( '.player-form__entry' );
 
+
+    this.defaultTrack = 'https://soundcloud.com/alvan/amazone';
+    this.playRateProgress = 1;
 
     this.audioAnalyser = new AudioAnalyser( this.player );
     this.audioControlPanel = new AudioControlPanel( this.player );
@@ -68,12 +70,27 @@ class Main {
 
     this.webgl = new WebGLExperiment( root, this.resources, this.audioAnalyser );
 
+    this.detectHash();
+    this.generateTimelines();
+    this.addEventListeners();
+  }
+
+  generateTimelines() {
+
+    this.playbackRateTl = new TimelineMax( { paused: true } );
+
+    this.playbackRateTl
+      .fromTo( this.player, 1, { playbackRate: 1 }, { playbackRate: 0.5 } );
+  }
+
+  detectHash() {
+
     if ( window.location.hash ) {
       const trackUrl = 'https://soundcloud.com/' + window.location.hash.substr(1);
       this.loadTrack( trackUrl );
     } else {
       setTimeout( ()=>{
-        this.loadTrack( 'https://soundcloud.com/alvan/amazone' );
+        this.loadTrack( this.defaultTrack );
       }, 500 );
     }
   }
@@ -88,7 +105,7 @@ class Main {
       },
       ()=>{
 
-        this.loadTrack( 'https://soundcloud.com/alvan/amazone' );
+        this.loadTrack( this.defaultTrack );
       });
   }
 
@@ -111,13 +128,28 @@ class Main {
   }
 
   onFormSubmit( ev ) {
+
     ev.preventDefault();
     const trackUrl = this.trackInput.value;
     this.loadTrack( trackUrl );
   }
 
   onPlayerTimeUpdate() {
+
     this.audioControlPanel.timecodeUpdate();
+  }
+
+  onMouseDown() {
+
+    TweenMax.to( this, 0.5, { playRateProgress: 1, ease: Expo.easeOut, onUpdate: ()=> {
+      this.playbackRateTl.progress( this.playRateProgress );
+    }});
+  }
+
+  onMouseUp() {
+    TweenMax.to( this, 0.3, { playRateProgress: 0, ease: Expo.easeOut, onUpdate: ()=> {
+      this.playbackRateTl.progress( this.playRateProgress );
+    }});
   }
 
 }
