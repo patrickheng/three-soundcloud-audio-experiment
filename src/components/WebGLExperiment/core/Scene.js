@@ -1,7 +1,12 @@
+import Emitter from 'helpers/Emitter';
 import AbstractScene from 'webgl/core/AbstractScene';
+
 import LineEmitter from '../meshes/LineEmitter';
 import BallEmitter from '../meshes/BallEmitter';
+
 import { lights as lightsConfig } from 'config/webgl/home';
+import findIndex from 'lodash.findindex';
+import { MOUSE_DOWN, MOUSE_UP } from 'config/messages';
 
 /**
  * Scene class
@@ -24,22 +29,67 @@ class Scene extends AbstractScene {
     this.audioAnalyser = audioAnalyser;
     this.audioData = audioAnalyser.audioData;
 
-    this.progress = 0;
+    this.mouseDownProgress = 0;
     this.cameraConfig = config.camera;
 
     this.camera.position.copy( this.cameraConfig.position );
     this.camera.lookAt( this.cameraConfig.target );
 
+    this.bind();
     this.addListeners();
+    this.generateTimelines();
     this.initLights();
     this.initMeshes();
+  }
 
+  bind() {
+
+    [ 'handleMouseMove', 'onMouseUp', 'onMouseDown' ]
+      .forEach( ( fn ) => this[ fn ] = this[ fn ].bind( this ) );
   }
 
   addListeners() {
-    this.handleMouseMove = ::this.handleMouseMove;
+
+    Emitter.on( MOUSE_UP, this.onMouseUp );
+    Emitter.on( MOUSE_DOWN, this.onMouseDown );
 
     this.renderer.domElement.addEventListener( 'mousemove', this.handleMouseMove, false );
+  }
+
+  generateTimelines() {
+
+    const fishEyeIndex = findIndex( this.postProcessing.passes, { name: 'fishEyePass' });
+    const RGBPassIndex = findIndex( this.postProcessing.passes, { name: 'RGBSplitPass' });
+    const multiPassBloomPassIndex = findIndex( this.postProcessing.passes, { name: 'multiPassBloomPass' });
+    const fishEyePass = this.postProcessing.constructors[ fishEyeIndex ];
+    const RGBPass = this.postProcessing.constructors[ RGBPassIndex ];
+    const multiPassBloomPass = this.postProcessing.constructors[ multiPassBloomPassIndex ];
+
+
+    window.fishEye = fishEyePass;
+
+    this.mouseDownTl = new TimelineMax( { paused: true });
+
+    this.mouseDownTl
+      .fromTo( fishEyePass.params, 1, { power: 1 }, { power: 0.8 } )
+      .fromTo( multiPassBloomPass.params, 1, { blurAmount: 0.01, zoomBlurStrength: 1 }, { blurAmount: 3, zoomBlurStrength: 2 } )
+      .fromTo( RGBPass.params.delta, 1, { x: 0, y: 0 }, { x: 100, y: 100 } )
+      .to( this.camera.position, 1, { z: 350 });
+  }
+
+  initLights() {
+
+    this.ambientLight = new THREE.AmbientLight( lightsConfig.ambientLight.color, lightsConfig.ambientLight.intensity );
+    this.add( this.ambientLight );
+  }
+
+  initMeshes() {
+
+    this.lineEmitter = new LineEmitter( this.config.lineEmitter, this.resources );
+    this.add( this.lineEmitter );
+
+    this.ballEmitter = new BallEmitter( this.config.ballEmitter, this.resources );
+    this.add( this.ballEmitter );
   }
 
   handleMouseMove(ev) {
@@ -54,25 +104,31 @@ class Scene extends AbstractScene {
     this.camera.handleMouseMove( this.mousePos );
   }
 
-  initLights() {
 
-    this.ambientLight = new THREE.AmbientLight( lightsConfig.ambientLight.color, lightsConfig.ambientLight.intensity );
-    this.add( this.ambientLight );
+  handleWindowResize({ width, height }) {
+    this.width = width;
+    this.height = height;
+
+    this.camera.handleWindowResize({ width, height });
+    this.renderer.handleWindowResize({ width, height });
+    this.effectComposer.handleWindowResize({ width, height });
+    this.lineEmitter.handleWindowResize({ width, height });
   }
 
-  initMeshes() {
+  onMouseDown() {
 
-    const geometry = new THREE.SphereGeometry( 5, 32, 32 );
-    const material = new THREE.MeshBasicMaterial( { color: 0x444444, wireframe: true } );
-    this.sphere = new THREE.Mesh( geometry, material );
-    // this.add( this.sphere );
+    this.renderer.setClearColor( 0x03060c, 1 );
+    TweenMax.to( this, 2, { mouseDownProgress: 1, ease: Expo.easeOut, onUpdate: ()=> {
+      this.mouseDownTl.progress( this.mouseDownProgress );
+    }});
+  }
 
+  onMouseUp() {
 
-    this.lineEmitter = new LineEmitter( this.config.lineEmitter, this.resources );
-    this.add( this.lineEmitter );
-
-    this.ballEmitter = new BallEmitter( this.config.ballEmitter, this.resources );
-    this.add( this.ballEmitter );
+    this.renderer.setClearColor( 0x010306, 1 );
+    TweenMax.to( this, 0.3, { mouseDownProgress: 0, ease: Expo.easeOut, onUpdate: ()=> {
+      this.mouseDownTl.progress( this.mouseDownProgress );
+    }});
   }
 
   /**
@@ -87,23 +143,8 @@ class Scene extends AbstractScene {
 
     this.lineEmitter.update( this.clock.time, this.audioData );
     this.ballEmitter.update( this.clock.time, this.audioData );
-
-    this.sphere.scale.set( this.audioData.beat / 20, this.audioData.beat / 20, this.audioData.beat / 20 );
-
-    this.sphere.position.z = Math.sin( this.clock.elapsedTime ) * 10;
-    this.sphere.position.x = -Math.cos( this.clock.elapsedTime ) * 10;
-    this.sphere.position.y = Math.cos( this.clock.elapsedTime ) * 10;
   }
 
-  handleWindowResize({ width, height }) {
-    this.width = width;
-    this.height = height;
-
-    this.camera.handleWindowResize({ width, height });
-    this.renderer.handleWindowResize({ width, height });
-    this.effectComposer.handleWindowResize({ width, height });
-    this.lineEmitter.handleWindowResize({ width, height });
-  }
 }
 
 export default Scene;

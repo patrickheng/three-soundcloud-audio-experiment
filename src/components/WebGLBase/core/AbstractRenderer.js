@@ -14,18 +14,6 @@ class AbstractRenderer extends THREE.WebGLRenderer {
     this.setClearColor( clearColor, clearColorAlpha );
     this.setPixelRatio( pixelRatio );
     this.clear();
-    //
-    // this.shadowMap.enabled = true;
-    // this.shadowMapSoft = true;
-    //
-    // this.shadowCameraNear = 3;
-    // this.shadowCameraFar = 2000;
-    // this.shadowCameraFov = 50;
-    //
-    // this.shadowMapBias = 0.0039;
-    // this.shadowMapDarkness = 0.5;
-    // this.shadowMapWidth = 1024;
-    // this.shadowMapHeight = 1024;
   }
 
   /**

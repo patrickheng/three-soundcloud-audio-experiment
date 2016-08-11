@@ -4,7 +4,6 @@ import 'utils/webgl/MeshLine';
 
 import { parabola, randomInt, randomFloat } from 'utils/maths';
 
-
 /**
 * Line class
 */
@@ -23,7 +22,8 @@ class Line {
     this.audioData = null;
 
     this.isAlive = true;
-    this.velocity = randomFloat( 0 , 0.3 );
+    this.baseVelocity=  randomFloat( 0 , 0.3 );
+    this.velocity = this.baseVelocity;
 
     this.makeLine( this.createCurve() );
   }
@@ -77,12 +77,21 @@ class Line {
   }
 
   reset() {
+    this.velocity = this.baseVelocity;
     this.mesh.position.z = randomInt( -4000, -2000 );
     this.isAlive = true;
   }
 
   handleWindowResize({ width, height }) {
     this.matManager.handleWindowResize({ width, height });
+  }
+
+  onMouseDown() {
+    this.velocity = this.baseVelocity / 4;
+  }
+
+  onMouseUp() {
+    this.velocity = this.baseVelocity;
   }
 
   update( time, audioData, i ) {

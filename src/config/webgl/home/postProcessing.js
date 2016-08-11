@@ -4,6 +4,7 @@ import TiltShiftPass from '@superguigui/wagner/src/passes/tiltShift/tiltShiftPas
 import VignettePass from '@superguigui/wagner/src/passes/vignette/VignettePass';
 import NoisePass from '@superguigui/wagner/src/passes/noise/noise';
 import FXAAPass from '@superguigui/wagner/src/passes/fxaa/FXAAPass';
+import FishEyePass from '@superguigui/wagner/src/passes/fishEye/FishEyePass';
 import SymetricPass from '@superguigui/wagner/src/passes/symetric/symetric';
 import RGBSplitPass from 'webgl/postProcessing/passes/RGBSplit';
 
@@ -14,11 +15,18 @@ export default {
   },
   passes: [
     {
-      name: 'SymetricPass',
+      name: 'symetricPass',
       active: true,
       constructor: () => new SymetricPass({
         xMirror: true,
         yMirror: true
+      })
+    },
+    {
+      name: 'fishEyePass',
+      active: true,
+      constructor: () => new FishEyePass({
+        power: 1
       })
     },
     {

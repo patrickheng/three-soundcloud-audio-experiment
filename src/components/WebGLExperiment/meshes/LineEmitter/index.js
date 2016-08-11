@@ -1,9 +1,10 @@
 import Line from './Line';
+import Emitter from 'helpers/Emitter';
+import { MOUSE_DOWN, MOUSE_UP } from 'config/messages';
 
 class LineEmitter extends THREE.Group {
 
   constructor( config, resources ) {
-
     super();
 
     this.config = config;
@@ -17,6 +18,21 @@ class LineEmitter extends THREE.Group {
 
     this.populate();
     this.throw( 50 );
+
+    this.bind();
+    this.addListeners();
+  }
+
+  bind() {
+
+    [ 'onMouseUp', 'onMouseDown' ]
+      .forEach( ( fn ) => this[ fn ] = this[ fn ].bind( this ) );
+  }
+
+  addListeners() {
+
+    Emitter.on( MOUSE_UP, this.onMouseUp );
+    Emitter.on( MOUSE_DOWN, this.onMouseDown );
   }
 
   populate() {
@@ -53,6 +69,18 @@ class LineEmitter extends THREE.Group {
     }
   }
 
+  onMouseDown() {
+    for (let i = 0; i < this.particles.length; i++) {
+      this.particles[ i ].onMouseDown();
+    }
+  }
+
+  onMouseUp() {
+    for (let i = 0; i < this.particles.length; i++) {
+      this.particles[ i ].onMouseUp();
+    }
+  }
+
   update( time, audioData ) {
 
     for (let i = 0; i < this.particles.length; i++) {
@@ -70,8 +98,6 @@ class LineEmitter extends THREE.Group {
       }
     }
   }
-
-
 }
 
 export default LineEmitter;

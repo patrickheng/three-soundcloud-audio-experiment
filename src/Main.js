@@ -2,13 +2,16 @@ import 'stylesheets/main.scss';
 import 'gsap';
 
 import domready from 'domready';
+import Emitter from 'helpers/Emitter';
+import AssetsLoader from 'helpers/AssetsLoader';
 import AudioAnalyser from 'helpers/AudioAnalyser';
 import SoundCloudLoader from 'helpers/SoundCloudLoader';
 
 import LoaderComponent from 'components/Loader';
 import AudioControlPanel from 'components/AudioControlPanel';
 import WebGLExperiment from 'components/WebGLExperiment';
-import AssetsLoader from 'helpers/AssetsLoader';
+
+import { MOUSE_DOWN, MOUSE_UP } from 'config/messages';
 
 class Main {
 
@@ -141,12 +144,17 @@ class Main {
 
   onMouseDown() {
 
+    Emitter.emit( MOUSE_DOWN, this.playRateProgress );
+
     TweenMax.to( this, 0.5, { playRateProgress: 1, ease: Expo.easeOut, onUpdate: ()=> {
       this.playbackRateTl.progress( this.playRateProgress );
     }});
   }
 
   onMouseUp() {
+
+    Emitter.emit( MOUSE_UP, this.playRateProgress );
+
     TweenMax.to( this, 0.3, { playRateProgress: 0, ease: Expo.easeOut, onUpdate: ()=> {
       this.playbackRateTl.progress( this.playRateProgress );
     }});
