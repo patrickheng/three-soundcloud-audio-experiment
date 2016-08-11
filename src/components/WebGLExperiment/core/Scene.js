@@ -1,5 +1,6 @@
 import AbstractScene from 'webgl/core/AbstractScene';
-import MeshLines from '../meshes/MeshLines';
+import LineEmitter from '../meshes/LineEmitter';
+import BallEmitter from '../meshes/BallEmitter';
 import { lights as lightsConfig } from 'config/webgl/home';
 
 /**
@@ -62,13 +63,16 @@ class Scene extends AbstractScene {
   initMeshes() {
 
     const geometry = new THREE.SphereGeometry( 5, 32, 32 );
-    const material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+    const material = new THREE.MeshBasicMaterial( { color: 0x444444, wireframe: true } );
     this.sphere = new THREE.Mesh( geometry, material );
-    this.add( this.sphere );
+    // this.add( this.sphere );
 
 
-    this.meshLines = new MeshLines( this.config.meshLines, this.resources );
-    this.add( this.meshLines );
+    this.lineEmitter = new LineEmitter( this.config.lineEmitter, this.resources );
+    this.add( this.lineEmitter );
+
+    this.ballEmitter = new BallEmitter( this.config.ballEmitter, this.resources );
+    this.add( this.ballEmitter );
   }
 
   /**
@@ -79,11 +83,16 @@ class Scene extends AbstractScene {
     this.preRender();
 
     this.audioAnalyser.sampleAudioData();
-    this.audioData = this.audioAnalyser.audioData;
-    this.beat = this.audioAnalyser.beat;
-    this.meshLines.update( this.clock.time, this.clock.delta );
+    this.audioData = this.audioData;
 
-    this.sphere.scale.set( this.beat / 20, this.beat / 20, this.beat / 20 );
+    this.lineEmitter.update( this.clock.time, this.audioData );
+    this.ballEmitter.update( this.clock.time, this.audioData );
+
+    this.sphere.scale.set( this.audioData.beat / 20, this.audioData.beat / 20, this.audioData.beat / 20 );
+
+    this.sphere.position.z = Math.sin( this.clock.elapsedTime ) * 10;
+    this.sphere.position.x = -Math.cos( this.clock.elapsedTime ) * 10;
+    this.sphere.position.y = Math.cos( this.clock.elapsedTime ) * 10;
   }
 
   handleWindowResize({ width, height }) {
@@ -93,7 +102,7 @@ class Scene extends AbstractScene {
     this.camera.handleWindowResize({ width, height });
     this.renderer.handleWindowResize({ width, height });
     this.effectComposer.handleWindowResize({ width, height });
-    this.meshLines.handleWindowResize({ width, height });
+    this.lineEmitter.handleWindowResize({ width, height });
   }
 }
 

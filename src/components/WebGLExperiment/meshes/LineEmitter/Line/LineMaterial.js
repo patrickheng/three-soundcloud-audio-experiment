@@ -3,23 +3,23 @@
 import { randomInt, randomFloat } from 'utils/maths';
 
 /**
-* MeshLineMaterial class
+* LineMaterial class
 */
-class MeshLineMaterial {
+class LineMaterial {
 
 	constructor( resources ) {
 
-		const textureList = [ 'stroke', 'zigzag', 'sinwave', 'nawakpaint' ];
-
 		const strokesEnabled = true;
+		const textureList = [ 'stroke', 'zigzag', 'sinwave', 'nawakpaint' ];
 		const map = resources[ textureList[ randomInt( 0, textureList.length - 1 ) ] ];
+
 		this.lineWidth = randomFloat( 0 , 5 );
 
     this.params = {
 			map,
 			useMap: true,
 			color: new THREE.Color( 0xdddddd ),
-			opacity: strokesEnabled ? .4 : 1,
+			opacity: strokesEnabled ? 0.5 : 1,
 			dashArray: new THREE.Vector2( 0, 0 ),
 			resolution: new THREE.Vector2( window.innerWidth, window.innerHeight ),
 			sizeAttenuation: true,
@@ -32,7 +32,6 @@ class MeshLineMaterial {
 			side: THREE.DoubleSide
 		}
 
-		this.canUpdate = false;
 		this.material = new THREE.MeshLineMaterial( this.params );
 	}
 
@@ -40,12 +39,11 @@ class MeshLineMaterial {
 		this.material.uniforms.resolution.value.set( width, height );
 	}
 
-  update( time, index ) {
-		if( !this.canUpdate ) return;
-  	this.material.uniforms.lineWidth.value = this.lineWidth * ( 1 + .5 * Math.sin( 2 * time + index ) );
+  update( time, audioData, index ) {
+  	this.material.uniforms.lineWidth.value = this.lineWidth * ( 1 + .5 * Math.sin( 4 * time + index ) );
   }
 }
 
-export default MeshLineMaterial;
+export default LineMaterial;
 
 /* eslint-enable */
