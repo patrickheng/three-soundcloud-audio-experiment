@@ -4,28 +4,37 @@ import TiltShiftPass from '@superguigui/wagner/src/passes/tiltShift/tiltShiftPas
 import VignettePass from '@superguigui/wagner/src/passes/vignette/VignettePass';
 import NoisePass from '@superguigui/wagner/src/passes/noise/noise';
 import FXAAPass from '@superguigui/wagner/src/passes/fxaa/FXAAPass';
+import SymetricPass from '@superguigui/wagner/src/passes/symetric/symetric';
 import RGBSplitPass from 'webgl/postProcessing/passes/RGBSplit';
 
 export default {
-  active: false,
+  active: true,
   effectComposer: {
     useRGBA: true
   },
   passes: [
     {
+      name: 'SymetricPass',
+      active: true,
+      constructor: () => new SymetricPass({
+        xMirror: true,
+        yMirror: true
+      })
+    },
+    {
       name: 'RGBSplitPass',
       active: true,
       constructor: () => new RGBSplitPass({
-        delta: new THREE.Vector2(10, 10)
+        delta: new THREE.Vector2(30, 30)
       })
     },
     {
       name: 'multiPassBloomPass',
-      active: false,
+      active: true,
       constructor: () => new MultiPassBloomPass({
-        blurAmount: 0.05,
+        blurAmount: 0.01,
         applyZoomBlur: true,
-        zoomBlurStrength: 2,
+        zoomBlurStrength: 1,
         blendMode: BlendMode.Screen
       })
     },
@@ -40,7 +49,7 @@ export default {
     },
     {
       name: 'noisePass',
-      active: true,
+      active: false,
       constructor: () => new NoisePass({
         amount: 0.02,
         speed: 0.1

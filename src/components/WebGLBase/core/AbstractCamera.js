@@ -55,8 +55,8 @@ class AbstractCamera extends THREE.PerspectiveCamera {
 
   handleMouseMove({ x, y }) {
 
-    this.position.x = this.basePosition.x + x * 2;
-    this.position.y = this.basePosition.y + y * 2;
+    this.position.x = this.basePosition.x + x * 6;
+    this.position.y = this.basePosition.y + y * 6;
     // this.position.z = this.basePosition.z + ( y + x ) * 2 ;
 
   }
