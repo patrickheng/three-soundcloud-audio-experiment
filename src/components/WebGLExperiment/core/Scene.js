@@ -70,7 +70,7 @@ class Scene extends AbstractScene {
     this.mouseDownTl = new TimelineMax( { paused: true });
 
     this.mouseDownTl
-      .fromTo( fishEyePass.params, 1, { power: 1 }, { power: 0.8 }, 0 )
+      .fromTo( fishEyePass.params, 1, { power: 0.9 }, { power: 0.7 }, 0 )
       .fromTo( multiPassBloomPass.params, 1, { blurAmount: 0.01, zoomBlurStrength: 1 }, { blurAmount: 3, zoomBlurStrength: 2 }, 0 )
       .fromTo( RGBPass.params.delta, 1, { x: 0, y: 0 }, { x: 100, y: 100 }, 0 )
       .to( this.camera.position, 1, { z: 350 }, 0 );

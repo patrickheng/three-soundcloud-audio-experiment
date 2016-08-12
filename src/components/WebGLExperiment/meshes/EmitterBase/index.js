@@ -75,7 +75,9 @@ class EmitterBase extends THREE.Group {
   update( time, audioData ) {
 
     for (let i = 0; i < this.particles.length; i++) {
+
       const deadP = [];
+
       if( this.particles[ i ].isAlive ) {
         this.particles[ i ].update( time, audioData, i );
       } else {

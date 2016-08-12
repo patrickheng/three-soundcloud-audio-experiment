@@ -26,7 +26,7 @@ export default {
       name: 'fishEyePass',
       active: true,
       constructor: () => new FishEyePass({
-        power: 1
+        power: 0.9
       })
     },
     {

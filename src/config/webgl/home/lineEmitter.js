@@ -1,6 +1,6 @@
 export default {
   poolSize: 1000,
-  throwNb: 20,
+  throwNb: 50,
 
   geometry: {
     autoRotate: false,

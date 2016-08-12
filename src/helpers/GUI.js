@@ -37,7 +37,7 @@ class GUI extends ControlKit {
   addPanel( options = {}) {
     return super.addPanel({
       align: 'left',
-      position: [ 10, 10 ],
+      position: [ 10, 100 ],
       opacity: 0.8,
       width: 275,
       ratio: 10,
