@@ -10,10 +10,13 @@ class SoundCloudLoader {
 
     this.player = player;
     this.audioControlPanel = audioControlPanel;
-    this.clientId = '56a8ad9788b843c94815bce57ef4fd03';
+    this.clientId = ''; // HERE YOUR CLIENT ID
     this.sound = {};
     this.streamUrl = "";
     this.errorMessage = "";
+
+    if( this.clientId === '')
+      alert('You need to insert your soundcloud client id in SoundCloudLoader.js');
   }
 
   loadStream( trackUrl, successCallback, errorCallback ) {
