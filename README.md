@@ -2,7 +2,9 @@
 
 Here is simple audio visualization using Three.js and the Soundcloud API.
 
-You can see it live here : [http//lab.hengpatrick.fr](http//lab.hengpatrick.fr/three-soundcloud-audioviz).
+You can see it live [here](http://lab.hengpatrick.fr/soundcloud-visualizer).
+
+![Screenshot](http://i.imgur.com/ejInN4S.png)
 
 #### TECHNOLOGIES
 
