@@ -83,7 +83,8 @@ class Main {
     this.playbackRateTl = new TimelineMax( { paused: true } );
 
     this.playbackRateTl
-      .fromTo( this.player, 1, { playbackRate: 1 }, { playbackRate: 0.5 } );
+      .fromTo( this.player, 1, { playbackRate: 1 }, { playbackRate: 0.75 } )
+      .fromTo( this.audioAnalyser.bqFilter.frequency , 1, { value: 10000 }, { value: 1000 } );
   }
 
   detectHash() {
@@ -101,13 +102,13 @@ class Main {
   loadTrack( url ) {
 
     this.SCLoader.loadStream( url,
-      ()=>{
+      (  )=>{
+
         this.audioControlPanel.clearInfoPanel();
         this.audioAnalyser.play( this.SCLoader.streamUrl );
         this.audioControlPanel.update( this.SCLoader );
       },
       ()=>{
-
         this.loadTrack( this.defaultTrack );
       });
   }

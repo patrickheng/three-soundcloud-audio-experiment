@@ -3,6 +3,8 @@ import AbstractScene from 'webgl/core/AbstractScene';
 
 import LineEmitter from '../meshes/LineEmitter';
 import BallEmitter from '../meshes/BallEmitter';
+import BassShapeEmitter from '../meshes/BassShapeEmitter';
+import MediumShapeEmitter from '../meshes/MediumShapeEmitter';
 
 import { lights as lightsConfig } from 'config/webgl/home';
 import findIndex from 'lodash.findindex';
@@ -65,16 +67,13 @@ class Scene extends AbstractScene {
     const RGBPass = this.postProcessing.constructors[ RGBPassIndex ];
     const multiPassBloomPass = this.postProcessing.constructors[ multiPassBloomPassIndex ];
 
-
-    window.fishEye = fishEyePass;
-
     this.mouseDownTl = new TimelineMax( { paused: true });
 
     this.mouseDownTl
-      .fromTo( fishEyePass.params, 1, { power: 1 }, { power: 0.8 } )
-      .fromTo( multiPassBloomPass.params, 1, { blurAmount: 0.01, zoomBlurStrength: 1 }, { blurAmount: 3, zoomBlurStrength: 2 } )
-      .fromTo( RGBPass.params.delta, 1, { x: 0, y: 0 }, { x: 100, y: 100 } )
-      .to( this.camera.position, 1, { z: 350 });
+      .fromTo( fishEyePass.params, 1, { power: 1 }, { power: 0.8 }, 0 )
+      .fromTo( multiPassBloomPass.params, 1, { blurAmount: 0.01, zoomBlurStrength: 1 }, { blurAmount: 3, zoomBlurStrength: 2 }, 0 )
+      .fromTo( RGBPass.params.delta, 1, { x: 0, y: 0 }, { x: 100, y: 100 }, 0 )
+      .to( this.camera.position, 1, { z: 350 }, 0 );
   }
 
   initLights() {
@@ -90,6 +89,12 @@ class Scene extends AbstractScene {
 
     this.ballEmitter = new BallEmitter( this.config.ballEmitter, this.resources );
     this.add( this.ballEmitter );
+
+    this.bassShapeEmitter = new BassShapeEmitter( this.config.bassShapeEmitter, this.resources );
+    this.add( this.bassShapeEmitter );
+
+    this.mediumShapeEmitter = new MediumShapeEmitter( this.config.mediumShapeEmitter, this.resources );
+    this.add( this.mediumShapeEmitter );
   }
 
   handleMouseMove(ev) {
@@ -113,6 +118,9 @@ class Scene extends AbstractScene {
     this.renderer.handleWindowResize({ width, height });
     this.effectComposer.handleWindowResize({ width, height });
     this.lineEmitter.handleWindowResize({ width, height });
+    this.ballEmitter.handleWindowResize({ width, height });
+    this.bassShapeEmitter.handleWindowResize({ width, height });
+    this.mediumShapeEmitter.handleWindowResize({ width, height });
   }
 
   onMouseDown() {
@@ -143,6 +151,8 @@ class Scene extends AbstractScene {
 
     this.lineEmitter.update( this.clock.time, this.audioData );
     this.ballEmitter.update( this.clock.time, this.audioData );
+    this.bassShapeEmitter.update( this.clock.time, this.audioData );
+    this.mediumShapeEmitter.update( this.clock.time, this.audioData );
   }
 
 }

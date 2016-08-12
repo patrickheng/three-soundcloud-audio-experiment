@@ -1,76 +1,15 @@
+import EmitterBase from '../EmitterBase';
 import Ball from './Ball';
 
-class BallEmitter extends THREE.Group {
+class BallEmitter extends EmitterBase {
 
   constructor( config, resources ) {
 
-    super();
+    super( config, resources );
 
-    this.config = config;
-    this.resources = resources;
-
-    this.particlesNumber = 300;
-
-    this.poolIndex = 0;
-    this.pool = [];
-    this.particles = [];
-
-    this.populate();
-    this.throw( 10 );
+    this.populate( Ball, config.poolSize );
+    this.throw( config.throwNb );
   }
-
-  populate() {
-
-    for (let i = 0; i < this.particlesNumber; i++ ) {
-      this.pool.push( new Ball( this.config, this.resources ) );
-    }
-  }
-
-  throw( number ) {
-
-    for (let i = 0; i < number; i++) {
-
-      const p = this.takeFromPool();
-
-      p.reset();
-
-      this.particles.push( p );
-      this.add( p.mesh );
-    }
-  }
-
-  takeFromPool() {
-
-    this.poolIndex = (this.poolIndex >= this.pool.length - 1) ? 0 : this.poolIndex + 1;
-
-    return this.pool[ this.poolIndex ];
-  }
-
-  handleWindowResize({ width, height }) {
-
-    for (let i = 0; i < this.particles.length; i++) {
-      this.particles[ i ].matManager.handleWindowResize({ width, height });
-    }
-  }
-
-  update( time, audioData ) {
-
-    for (let i = 0; i < this.particles.length; i++) {
-      const deadP = [];
-      if( this.particles[ i ].isAlive ) {
-        this.particles[ i ].update( time, audioData, i );
-      } else {
-        deadP.push( i );
-      }
-
-      for (let i = 0; i < deadP.length; i++) {
-        this.remove( this.particles[ deadP[ i ] ]);
-        this.particles.splice( deadP[ i ], 1);
-        this.throw( 1 );
-      }
-    }
-  }
-
 
 }
 

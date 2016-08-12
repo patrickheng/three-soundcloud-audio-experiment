@@ -22,7 +22,7 @@ class Line {
     this.audioData = null;
 
     this.isAlive = true;
-    this.baseVelocity=  randomFloat( 0 , 0.3 );
+    this.baseVelocity=  randomFloat( 0 , 0.2 );
     this.velocity = this.baseVelocity;
 
     this.makeLine( this.createCurve() );
@@ -71,12 +71,13 @@ class Line {
       case 'wavy': g.setGeometry( geo, function( p ) { return 2 + Math.sin( 50 * p ); } ); break;
     }
 
-    this.matManager = new LineMaterial( this.resources );
+    this.matManager = new LineMaterial( this.config.material, this.resources );
     this.mesh = new THREE.Mesh( g.geometry, this.matManager.material );
 
   }
 
   reset() {
+    console.log('reset');
     this.velocity = this.baseVelocity;
     this.mesh.position.z = randomInt( -4000, -2000 );
     this.isAlive = true;
@@ -87,7 +88,7 @@ class Line {
   }
 
   onMouseDown() {
-    this.velocity = this.baseVelocity / 4;
+    this.velocity = this.baseVelocity / 2.5;
   }
 
   onMouseUp() {
@@ -100,7 +101,7 @@ class Line {
 
     this.audioData = audioData;
     this.matManager.update( time, this.audioData, i );
-    this.mesh.position.z += this.audioData.beat * this.velocity;
+    this.mesh.position.z += ( this.audioData.beat + this.audioData.splitFreq[ 2 ] / 20 ) * this.velocity;
 
     if( this.mesh.position.z >= 1000 )
       this.isAlive = false;

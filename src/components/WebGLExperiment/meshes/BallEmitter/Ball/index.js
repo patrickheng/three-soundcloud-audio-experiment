@@ -41,7 +41,7 @@ class Ball {
       case 'wavy': g.setGeometry( geo, function( p ) { return 2 + Math.sin( 50 * p ); } ); break;
     }
 
-    this.matManager = new BallMaterial( this.resources );
+    this.matManager = new BallMaterial( this.config.material, this.resources );
     this.mesh = new THREE.Mesh( g.geometry, this.matManager.material );
 
   }
@@ -63,7 +63,7 @@ class Ball {
 
     this.audioData = audioData;
     this.matManager.update( time, this.audioData, i );
-    this.mesh.position.z += this.audioData.beat * this.velocity;
+    this.mesh.position.z += this.audioData.splitFreq[ 1 ] * this.velocity;
     const scaleVal = ( this.audioData.beat ) ? this.audioData.beat / 80 : 0.00001;
     this.mesh.scale.set( scaleVal, scaleVal, scaleVal );
 
