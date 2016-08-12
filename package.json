@@ -1,7 +1,7 @@
 {
   "name": "three-soundcloud-audio-experiment",
   "version": "0.1.0",
-  "description": "three-soundcloud-audio-experiment",
+  "description": "Simple three.js audio visualization via soundcloud API",
   "keywords": [
     "three.js",
     "glsl",
@@ -36,8 +36,7 @@
     "raf-loop": "^1.1.3",
     "style-loader": "^0.13.0",
     "three": "^0.78.0",
-    "three-orbit-controls": "^72.0.0",
-    "web-audio-beat-detector": "0.0.2"
+    "three-orbit-controls": "^72.0.0"
   },
   "devDependencies": {
     "autoprefixer-loader": "^3.2.0",
