@@ -38,9 +38,22 @@ canvas {
 .info {
   @include center-x;
   @include no-select;
-  position: absolute;
   bottom: 2rem;
   color: $color-light-grey;
   perspective: 1000;
   letter-spacing: 0.05rem;
+}
+
+.github-link {
+  position: absolute;
+  left: 2rem;
+  bottom: 2rem;
+  color: $color-light-grey;
+  font-size: 0.8rem;
+  letter-spacing: 0.05rem;
+  transition: color 0.3s ease-out;
+
+  &:hover {
+    color: $color-white;
+  }
 }
