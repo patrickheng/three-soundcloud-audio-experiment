@@ -77,7 +77,7 @@ class Line {
   }
 
   reset() {
-    console.log('reset');
+
     this.velocity = this.baseVelocity;
     this.mesh.position.z = randomInt( -4000, -2000 );
     this.isAlive = true;
