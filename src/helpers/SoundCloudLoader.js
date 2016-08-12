@@ -10,7 +10,7 @@ class SoundCloudLoader {
 
     this.player = player;
     this.audioControlPanel = audioControlPanel;
-    this.clientId = ''; // HERE YOUR CLIENT ID
+    this.clientId = ''; // HERE YOUR CLIENT ID -> https://developers.soundcloud.com/
     this.sound = {};
     this.streamUrl = "";
     this.errorMessage = "";
