@@ -37,6 +37,7 @@ canvas {
 
 .info {
   @include center-x;
+  @include no-select;
   position: absolute;
   bottom: 2rem;
   color: $color-light-grey;
